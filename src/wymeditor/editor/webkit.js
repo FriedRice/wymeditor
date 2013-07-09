@@ -129,7 +129,21 @@ WYMeditor.WymClassSafari.prototype.addCssRule = function (styles, oCss) {
 //keydown handler, mainly used for keyboard shortcuts
 WYMeditor.WymClassSafari.prototype.keydown = function (e) {
     //'this' is the doc
-    var wym = WYMeditor.INSTANCES[this.title];
+    var wym = WYMeditor.INSTANCES[this.title],
+        sel,
+        range;
+
+    if (e.ctrlKey && e.shiftKey) {
+        if (e.keyCode === 32) {
+            // CTRL+SHIFT+Space => insert non-breaking space
+            sel = wym.selection();
+            if (sel) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(wym._doc.createTextNode('\xA0'));
+            }
+        }
+    }
 
     if (e.ctrlKey) {
         if (e.keyCode === WYMeditor.KEY.B) {

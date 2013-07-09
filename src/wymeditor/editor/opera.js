@@ -96,9 +96,21 @@ WYMeditor.WymClassOpera.prototype.addCssRule = function(styles, oCss) {
 
 WYMeditor.WymClassOpera.prototype.keydown = function(evt) {
     //'this' is the doc
-    var wym = WYMeditor.INSTANCES[this.title];
-    var sel = wym._iframe.contentWindow.getSelection();
-    startNode = sel.getRangeAt(0).startContainer;
+    var wym = WYMeditor.INSTANCES[this.title],
+        sel,
+        range;
+
+    if (evt.ctrlKey && evt.shiftKey) {
+        if (evt.keyCode === 32) {
+            // CTRL+SHIFT+Space => insert non-breaking space
+            sel = wym.selection();
+            if (sel) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(wym._doc.createTextNode('\xA0'));
+            }
+        }
+    }
 
     //Get a P instead of no container
     if (!jQuery(startNode).parentsOrSelf(WYMeditor.MAIN_CONTAINERS.join(","))[0] &&

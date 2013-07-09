@@ -217,11 +217,25 @@ WYMeditor.WymClassExplorer.prototype.unwrap = function () {
 
 WYMeditor.WymClassExplorer.prototype.keyup = function (evt) {
     //'this' is the doc
-    var wym = WYMeditor.INSTANCES[this.title];
+    var wym = WYMeditor.INSTANCES[this.title],
+        sel,
+        range;
 
     this._selected_image = null;
 
     var container = null;
+
+    if (evt.ctrlKey && evt.shiftKey) {
+        if (evt.keyCode === 32) {
+            // CTRL+SHIFT+Space => insert non-breaking space
+            sel = wym.selection();
+            if (sel) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(wym._doc.createTextNode('\xA0'));
+            }
+        }
+    }
 
     if (evt.keyCode !== WYMeditor.KEY.BACKSPACE &&
             evt.keyCode !== WYMeditor.KEY.CTRL &&
